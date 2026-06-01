@@ -19,6 +19,7 @@ class AppPages {
       name: _Paths.HOME,
       page: () => const HomeView(),
       binding: HomeBinding(),
+      preventDuplicates: true,
     ),
     GetPage(
       name: _Paths.PRODUCT_DETAILS,

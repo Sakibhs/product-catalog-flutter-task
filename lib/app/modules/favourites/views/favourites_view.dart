@@ -1,73 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:product_catelog/app/modules/favourites/controllers/favourites_controller.dart';
 
-class FavouritesView extends StatelessWidget {
+import '../../home/widgets/product_card.dart';
+
+class FavouritesView extends GetView<FavouritesController> {
   const FavouritesView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final hasData = true;
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Favorite Products',
-        ),
-      ),
-      body: hasData
-          ? ListView.separated(
-        padding: const EdgeInsets.all(16),
-        itemCount: 5,
-        separatorBuilder: (_, __) =>
-        const SizedBox(height: 12),
-        itemBuilder: (_, index) {
-          return ListTile(
-            shape: RoundedRectangleBorder(
-              borderRadius:
-              BorderRadius.circular(14),
-            ),
-            tileColor: Colors.white,
-            leading: Image.network(
-              'https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg',
-              width: 60,
-            ),
-            title: const Text(
-              'Product Name',
-              maxLines: 2,
-              overflow:
-              TextOverflow.ellipsis,
-            ),
-            subtitle: const Text(
-              '\$99.99',
-            ),
-            trailing: IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.favorite,
-                color: Colors.red,
-              ),
+      appBar: AppBar(title: const Text('Favorite Products')),
+      body: Obx(() {
+        final products = controller.favoriteProducts;
+
+        if (products.isEmpty) {
+          return Center(
+            child: Text(
+              'No favorite products yet.',
+              style: TextStyle(fontSize: 20.0),
             ),
           );
-        },
-      )
-          : const Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.favorite_border,
-              size: 80,
-              color: Colors.grey,
-            ),
-            SizedBox(height: 12),
-            Text(
-              'No favorites yet',
-              style: TextStyle(
-                fontSize: 18,
-              ),
-            ),
-          ],
-        ),
-      ),
+        }
+
+        return ListView.builder(
+          itemCount: products.length,
+          itemBuilder: (_, index) {
+            final product = products[index];
+
+            return ProductCard(
+              title: product.title ?? "",
+              image: product.image ?? "",
+              price: '\$${product.price}',
+              rating:
+                  '${product.rating?.rate ?? 0} (${product.rating?.count ?? 0})',
+              isFavorite: true,
+              onFavoriteTap: () {
+                controller.favoriteService.toggleFavorite(product.id ?? -1);
+              },
+              onTap: () {},
+            );
+          },
+        );
+      }),
     );
   }
 }

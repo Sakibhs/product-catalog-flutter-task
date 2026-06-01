@@ -21,7 +21,7 @@ class HomeView extends GetView<HomeController> {
         actions: [
           IconButton(
             onPressed: () {
-              // Navigate to favorites
+              Get.toNamed(Routes.FAVOURITES);
             },
             icon: const Icon(Icons.favorite_outline),
           ),
@@ -33,18 +33,26 @@ class HomeView extends GetView<HomeController> {
             Padding(
               padding: const EdgeInsets.all(16),
               child: TextField(
+                controller: controller.searchController,
                 decoration: InputDecoration(
                   hintText: 'Search products...',
                   prefixIcon: const Icon(Icons.search),
+                  suffixIcon: controller.searchController.text.isNotEmpty
+                      ? IconButton(
+                    onPressed: () {
+                      controller.searchController.clear();
+                      controller.searchProducts('');
+                    },
+                    icon: const Icon(Icons.clear),
+                  )
+                      : null,
                   filled: true,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
                     borderSide: BorderSide.none,
                   ),
                 ),
-                onChanged: (value) {
-                  // Search logic
-                },
+                onChanged: controller.searchProducts,
               ),
             ),
             if(controller.screenState.value == ScreenState.loading || controller.screenState.value == ScreenState.initial)
@@ -55,23 +63,35 @@ class HomeView extends GetView<HomeController> {
               const Center(child: Text('No products found')),
             if(controller.screenState.value == ScreenState.success)
               Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: controller.products.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
-                itemBuilder: (_, index) {
-                  return ProductCard(
-                    title: controller.products[index].title ?? 'Product Name',
-                    price: controller.products[index].price != null ? '\$${controller.products[index].price}' : '\$0.00',
-                    rating: controller.products[index].rating?.rate != null ? controller.products[index].rating!.rate.toString() : '0.0',
-                    image: controller.products[index].image ?? 'https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg',
-                    isFavorite: controller.products[index].isFavorite ?? false,
-                    onFavoriteTap: () {},
-                    onTap: () {
-                      Get.toNamed(Routes.PRODUCT_DETAILS, arguments: controller.products[index]);
-                    },
-                  );
-                },
+              child: Obx(
+                () => ListView.separated(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: controller.filteredProducts.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  itemBuilder: (_, index) {
+                    return Obx(
+                      () {
+                        final product = controller.filteredProducts[index];
+                        final isFav = controller.isFavorite(product.id ?? -1);
+                        return ProductCard(
+                          title: product.title ?? 'Product Name',
+                          price: product.price != null ? '\$${product.price}' : '\$0.00',
+                          rating: product.rating?.rate != null ? product.rating!.rate.toString() : '0.0',
+                          image: product.image ?? 'https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg',
+                          isFavorite: isFav,
+                          onFavoriteTap: () {
+                            controller.toggleFavorite(
+                              product.id ?? -1,
+                            );
+                          },
+                          onTap: () {
+                            Get.toNamed(Routes.PRODUCT_DETAILS, arguments: product);
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ),
           ],

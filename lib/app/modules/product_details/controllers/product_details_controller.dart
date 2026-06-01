@@ -1,23 +1,20 @@
 import 'package:get/get.dart';
+import '../../../services/favorite_service.dart';
 
 class ProductDetailsController extends GetxController {
-  //TODO: Implement ProductDetailsController
+  late final FavoriteService favoriteService;
 
-  final count = 0.obs;
   @override
   void onInit() {
     super.onInit();
+    favoriteService = Get.find<FavoriteService>();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
+  bool isFavorite(int productId) {
+    return favoriteService.isFavorite(productId);
   }
 
-  @override
-  void onClose() {
-    super.onClose();
+  Future<void> toggleFavorite(int productId) async {
+    await favoriteService.toggleFavorite(productId);
   }
-
-  void increment() => count.value++;
 }

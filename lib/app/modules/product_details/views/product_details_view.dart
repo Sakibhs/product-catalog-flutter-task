@@ -10,14 +10,23 @@ class ProductDetailsView extends GetView<ProductDetailsController> {
   @override
   Widget build(BuildContext context) {
     final product = Get.arguments as ProductModel;
+    final productId = product.id ?? -1;
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Product Details'),
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.favorite_border,
+          Obx(
+            () => IconButton(
+              onPressed: () {
+                controller.toggleFavorite(productId);
+              },
+              icon: Icon(
+                controller.isFavorite(productId)
+                    ? Icons.favorite
+                    : Icons.favorite_border,
+                color: controller.isFavorite(productId) ? Colors.red : null,
+              ),
             ),
           ),
         ],

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:product_catelog/app/modules/product_details/controllers/product_details_controller.dart';
@@ -39,9 +40,16 @@ class ProductDetailsView extends GetView<ProductDetailsController> {
               width: double.infinity,
               padding: const EdgeInsets.all(24),
               color: Colors.white,
-              child: Image.network(
-                product.image??"",
+              child: CachedNetworkImage(
+                imageUrl: product.image ?? "",
                 fit: BoxFit.contain,
+                placeholder: (context, url) => const Center(
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+                errorWidget: (context, url, error) => const Icon(
+                  Icons.image_not_supported_outlined,
+                  size: 40,
+                ),
               ),
             ),
 

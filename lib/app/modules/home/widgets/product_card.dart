@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class ProductCard extends StatelessWidget {
@@ -35,18 +36,25 @@ class ProductCard extends StatelessWidget {
           child: Row(
             children: [
               Container(
-                height: 90,
-                width: 90,
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(12),
+              height: 90,
+              width: 90,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: CachedNetworkImage(
+                imageUrl: image,
+                fit: BoxFit.contain,
+                placeholder: (context, url) => const Center(
+                  child: CircularProgressIndicator(strokeWidth: 2),
                 ),
-                child: Image.network(
-                  image,
-                  fit: BoxFit.contain,
+                errorWidget: (context, url, error) => const Icon(
+                  Icons.image_not_supported_outlined,
+                  size: 40,
                 ),
               ),
+            ),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(

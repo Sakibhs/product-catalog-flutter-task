@@ -65,7 +65,7 @@ class HomeView extends GetView<HomeController> {
               if (controller.screenState.value == ScreenState.error)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 48),
-                  child: const Center(child: Text('Failed to load products')),
+                  child: const Center(child: Text('Failed to load products. Check Your internet connection and try again.')),
                 ),
               if (controller.screenState.value == ScreenState.empty)
                 Padding(

@@ -39,8 +39,12 @@ class HomeController extends GetxController {
       }
 
       products.assignAll(result);
-      filteredProducts.assignAll(result);
-      screenState.value = ScreenState.success;
+      if (searchController.text.trim().isEmpty) {
+        filteredProducts.assignAll(result);
+        screenState.value = ScreenState.success;
+      } else {
+        searchProducts(searchController.text);
+      }
     } catch (e, s) {
       log('Error fetching products: $e', stackTrace: s);
       errorMessage.value = e.toString();
@@ -57,10 +61,7 @@ class HomeController extends GetxController {
     filteredProducts.assignAll(
       products.where(
         (product) =>
-            (product.title ?? '').toLowerCase().contains(query.toLowerCase()) ||
-            (product.category ?? '').toLowerCase().contains(
-              query.toLowerCase(),
-            ),
+            (product.title ?? '').toLowerCase().contains(query.toLowerCase()),
       ),
     );
     if (filteredProducts.isEmpty) {
